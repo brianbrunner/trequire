@@ -1,0 +1,27 @@
+{
+  "name": "trequire",
+  "version": "0.0.1",
+  "description": "Thunkify an entire module at once.",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/brianbrunner/trequire"
+  },
+  "keywords": [
+    "thunk",
+    "co",
+    "generators",
+    "thunkify",
+    "promise",
+    "generator"
+  ],
+  "author": "Brian Brunner",
+  "license": "MIT",
+  "homepage": "https://github.com/brianbrunner/trequire",
+  "dependencies": {
+    "thunkify": "*"
+  },
+  devDependencies": {
+    "mocha": "*",
+    "should": "*"  
+  }
+}
