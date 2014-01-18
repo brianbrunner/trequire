@@ -20,8 +20,8 @@
   "dependencies": {
     "thunkify": "*"
   },
-  devDependencies": {
+  "devDependencies": {
     "mocha": "*",
-    "should": "*"  
+    "should": "*"
   }
 }
