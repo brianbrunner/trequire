@@ -26,30 +26,42 @@ var thunkify = require('thunkify')
 function thunkRecurse(obj) {
 
     if (!obj || obj.__thunked__) {
-        return
+        return;
     }
-    obj.__thunked__ = true
+    obj.__thunked__ = true;
 
-    var keys = Object.keys(obj)
+    var keys = [
+        'prototype'
+    ];
+    for (key in obj) {
+        keys.push(key);
+    }
 
-    keys.forEach(function(key) {
+    for (var i = 0, len = keys.length; i < len; i++) {
 
-        var subobj = obj[key]
-        if (typeof subobj == "object") {
+        var key = keys[i];
 
-            thunkRecurse(subobj)
-            
-        } else if (typeof subobj == "function") {
-            
-            if (obj["co"+key]) {
-                console.log("Could not thunkify function '"+key+"' due to the property 'co"+key+"' already being set")
-            } else {
-                obj["co"+key] = thunkify(obj[key])
-            }
-
+        if (!obj[key]) {
+            continue;
         }
 
-    })
+        if (typeof obj[key] == "function") {
+            
+            if (obj["co"+key]) {
+                console.log("WARNING Could not thunkify function '"+key+"' due to the property 'co"+key+"' already being set");
+            } else {
+                obj["co"+key] = thunkify(obj[key]);
+            }
+
+            thunkRecurse(obj[key]);
+
+        } else if (typeof obj[key] == "object") {
+
+            thunkRecurse(obj[key]);
+
+        }
+            
+    }
 
 }
 
