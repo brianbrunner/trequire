@@ -11,7 +11,6 @@ module.exports = trequire
 
 var thunkify = require('thunkify')
 
-
 /**
  * Inner method that recursively `thunkify`s all functions in a module.
  * It does not replace the original function, rather it returns alternatives
@@ -39,28 +38,84 @@ function thunkRecurse(obj) {
 
     for (var i = 0, len = keys.length; i < len; i++) {
 
-        var key = keys[i];
+        try {
 
-        if (!obj[key]) {
-            continue;
-        }
+            var key = keys[i];
 
-        if (typeof obj[key] == "function") {
-            
-            if (obj["co"+key]) {
-                console.log("WARNING Could not thunkify function '"+key+"' due to the property 'co"+key+"' already being set");
-            } else {
-                obj["co"+key] = thunkify(obj[key]);
+            if (!obj[key]) {
+                continue;
             }
 
-            thunkRecurse(obj[key]);
+            var isFunc = typeof obj[key] == "function";
+            var isObj = typeof obj[key] == "object";
 
-        } else if (typeof obj[key] == "object") {
+            if (isFunc) {
 
-            thunkRecurse(obj[key]);
+                if (!obj["co"+key]) {
+                    obj["co"+key] = thunkify(obj[key]);
+                }
 
+            }
+
+            if (isFunc || isObj) {
+
+                    thunkRecurse(obj[key]);
+
+            }
+
+        } catch (e) {
+            // fail without correcting, not everything wants to be thunked this way
         }
-            
+
+    }
+
+}
+
+/**
+ * Inner method that removes thunked property so other modules that might
+ * expand on previously thunked code don't get messed up.
+ *
+ * @param {Object} obj
+ * @api private
+ */
+
+function removeThunkedProperty(obj) {
+
+    if (!obj || !obj.__thunked__) {
+        return;
+    }
+    delete obj.__thunked__;
+
+    var keys = [
+        'prototype'
+    ];
+    for (key in obj) {
+        keys.push(key);
+    }
+
+    for (var i = 0, len = keys.length; i < len; i++) {
+
+        try {
+
+            var key = keys[i];
+
+            if (!obj[key]) {
+                continue;
+            }
+
+            var isFunc = typeof obj[key] == "function";
+            var isObj = typeof obj[key] == "object";
+
+            if (isFunc || isObj) {
+
+                removeThunkedProperty(obj[key]);
+
+            }
+
+        } catch (e) {
+            // fail without correcting, not everything wants to be thunked this way
+        }
+
     }
 
 }
@@ -73,13 +128,19 @@ function thunkRecurse(obj) {
  * @api public
  */
 
-function trequire(name) {
+function trequire(nameOrModule) {
 
-    // for the sake of simplicity, assume we're requiring from the parent directoyr
-    var module = require('../'+name)
+    var module;
+    if (typeof nameOrModule == "string") {
+        // for the sake of simplicity, assume we're requiring from the parent directory
+        module = require('../'+nameOrModule);
+    } else {
+        module = nameOrModule
+    }
 
-    thunkRecurse(module)
-    
-    return module
+    thunkRecurse(module);
+    removeThunkedProperty(module);
+
+    return module;
 
 }
