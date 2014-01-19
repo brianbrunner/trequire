@@ -75,7 +75,8 @@ function thunkRecurse(obj) {
 
 function trequire(name) {
 
-    var module = require(name)
+    // for the sake of simplicity, assume we're requiring from the parent directoyr
+    var module = require('../'+name)
 
     thunkRecurse(module)
     
