@@ -1,6 +1,6 @@
 {
   "name": "trequire",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Thunkify an entire module at once.",
   "repository": {
     "type": "git",
