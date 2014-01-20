@@ -82,7 +82,7 @@ var rcli = redis.createClient();
 Thunks make it easy to write code that works well with the
 `co` module. This allows you to write code that is still 
 asynchronous but in some cases is easier to read. `co` 
-currently requires you to run you code with `--harmony` 
+currently requires you to run your code with the `--harmony` 
 flag as it utilizes javascript generators.
 
 ```js
