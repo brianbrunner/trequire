@@ -96,10 +96,10 @@ var rcli = redis.createClient();
 co(function *(){
     
     // set the key "foo" to "bar"
-    yield redis.coset("foo","bar");
+    yield rcli.coset("foo","bar");
 
     // retrieve the value of the key "foo"
-    var res = yield redis.coget("foo");
+    var res = yield rcli.coget("foo");
     // res = "bar"
 
 })()
