@@ -132,8 +132,11 @@ function trequire(nameOrModule) {
 
     var module;
     if (typeof nameOrModule == "string") {
-        // for the sake of simplicity, assume we're requiring from the parent directory
-        module = require('../'+nameOrModule);
+        try {
+            module = require('../'+nameOrModule);
+        } catch (e) {
+            module = require(nameOrModule);
+        }
     } else {
         module = nameOrModule
     }
